@@ -1,19 +1,17 @@
 # Seniors Spring Intensive Deliverable Proposal 
 
-## TODO: copy this file, fill it out, and push it up to your project's repo.
-
 Dates 3/16-3/25
 
-**My Name:**
+**My Name: Jeremy James**
 
 
-**Project Name:** 
+**Project Name: Sudoku Solver** 
 
 
-**Is your project New or Old?**
+**This project is a new one**
 
 
-**Is your project Solo or Team?**
+**This is a solo project**
 
 
 ## Description
