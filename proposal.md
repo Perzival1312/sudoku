@@ -4,54 +4,37 @@ Dates 3/16-3/25
 
 **My Name: Jeremy James**
 
-
 **Project Name: Sudoku Solver** 
 
-
 **This project is a new one**
-
 
 **This is a solo project**
 
 
 ## Description
+  * Create a sudoku solver withvisuals run via PyGame as a possible portfolio project
 
-**Write a paragraph summary of the current status of your project, what you hope to achieve during the intensive, how and why**
 
-## Objective 1: say your objective here, you must have at least three objectives to get credit for the intensive… accomplishing objective should be done by soley you
-
+## Objective 1: Get the backend working without pygame
 **Why do you want to meet this objective? How will it improve your project?** 
+  * It is the basis of the entire project
+**How will you demonstrate completion of your objective?**
+  * Having a working sudoku solver 
 
-**How will you demonstrate completion of your objective?** 
 
-## Objective 2: ... say your objective to accomplish here …
+## Objective 2: Learning PyGame
 **Why do you want to meet this objective? How will it improve your project?** 
-
+  * PyGame can make my project look cool
 **How will you demonstrate completion of your objective?** 
+  * By implementing PyGame
 
-## Objective 3: ... say your objective to accomplish here …
+
+## Objective 3: Get visualization via PyGame
 **Why do you want to meet this objective? How will it improve your project?** 
-
-**How will you demonstrate completion of your objective?** 
-
-## Stretch goals (optional):
-
-**What stretch goals do you have for your project?**
-
-## Evaluation
-
-**You must meet the following criteria in order to pass the intensive:**
-
-- Students must get proposal approved before starting the project to pass
-- SOLO
-    - Must score an average above a 3 on the [rubric]
-- TEAM
-    - Must score an average above 3 on the [rubric]
-    - Each individual completes 2 of the 3 objectives from their proposal
-- Pitch your product
-
-
-[rubric]:https://docs.google.com/document/d/1IOQDmohLBEBT-hyr-2vgw1mbZUNsq3fHxVfH0oRmVt0/edit
+  * PyGame is someting that I've wanted to play with for a while
+  * Fancy visuals make things stand out
+**How will you demonstrate completion of your objective?**
+  * Things looking cool 
 
 
 
@@ -63,6 +46,6 @@ Dates 3/16-3/25
 ### Sign off
 
 **Student Name:**                
-> Name / Date
+> Jeremy James / 03182020
 **Make School Advisor Name**
 > TBD
