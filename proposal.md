@@ -18,6 +18,7 @@ Dates 3/16-3/25
 ## Objective 1: Get the backend working without pygame
 **Why do you want to meet this objective? How will it improve your project?** 
   * It is the basis of the entire project
+  
 **How will you demonstrate completion of your objective?**
   * Having a working sudoku solver 
 
@@ -25,6 +26,7 @@ Dates 3/16-3/25
 ## Objective 2: Learning PyGame
 **Why do you want to meet this objective? How will it improve your project?** 
   * PyGame can make my project look cool
+
 **How will you demonstrate completion of your objective?** 
   * By implementing PyGame
 
@@ -32,7 +34,8 @@ Dates 3/16-3/25
 ## Objective 3: Get visualization via PyGame
 **Why do you want to meet this objective? How will it improve your project?** 
   * PyGame is someting that I've wanted to play with for a while
-  * Fancy visuals make things stand out
+  * Fancy visuals make things stand out 
+
 **How will you demonstrate completion of your objective?**
   * Things looking cool 
 
