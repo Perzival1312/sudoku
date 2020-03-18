@@ -18,7 +18,7 @@ Dates 3/16-3/25
 ## Objective 1: Get the backend working without pygame
 **Why do you want to meet this objective? How will it improve your project?** 
   * It is the basis of the entire project
-  
+
 **How will you demonstrate completion of your objective?**
   * Having a working sudoku solver 
 
@@ -50,5 +50,6 @@ Dates 3/16-3/25
 
 **Student Name:**                
 > Jeremy James / 03182020
+
 **Make School Advisor Name**
 > TBD
