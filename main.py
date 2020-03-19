@@ -41,7 +41,19 @@ and the solver could be your bike or car, approved
 '''
 
 
-import pygame, os, readline
+# import pygame as pg 
+# from pygame.locals import *
+
+
+import os, sys
+import pygame as pg
+from pygame.locals import *
+
+if not pg.font: print('Warning, fonts disabled')
+if not pg.mixer: print('Warning, sound disabled')
+
+
+import os, readline
 
 def parse_board(input):
     '''Take the input string from the command line and convert it into something usable'''
@@ -174,9 +186,11 @@ def place(board, num): # may need more depending on pygame...
 def display(board): #or should this be called update?
     '''I'm guessing pygame can just take in a list of lists and then print it out'''
     # So this should be pretty simple...
-    pass
+    screen_width=700
+    screen_height=400
+    pg.display.set_mode([screen_width,screen_height])
 
-def main_game_loop_func(board):
+def main_game_loop_func_cli(board):
     # board is not solved... keep playing
     while not board_checker(board):
         printer(board)
@@ -188,7 +202,32 @@ def main_game_loop_func(board):
     printer(board)
     print('\nYou have successfully completed this Sudoku puzzle!!')
 
+def main_game_loop_func_pygame(board):
+    pg.init()
+    screen = pg.display.set_mode((480, 640))
+    pg.display.set_caption('SuDoKu')
+    pg.mouse.set_visible(0)
+    background = pg.Surface(screen.get_size())
+    background = background.convert()
+    background.fill((250, 250, 250))
+    screen.blit(background, (0, 0))
+    pg.display.flip()
+    clock = pg.time.Clock()
+    borders = pg.rect.Rect(10, 10, 50, 50)
+    pg.draw.rect(background, [0,0,0], borders, 2)
 
+    while 1:
+        clock.tick(60)
+        for event in pg.event.get():
+            # Exit events
+            if event.type == QUIT:
+                return
+            elif event.type == KEYDOWN and event.key == K_ESCAPE:
+                return
+        screen.blit(background, (0, 0))
+        pg.display.flip()
+
+    pg.quit()
 
 if __name__ == "__main__":
     # solved board
@@ -227,4 +266,4 @@ if __name__ == "__main__":
 
     # print(board_checker(b))
     # printer(b)
-    main_game_loop_func(b)
+    main_game_loop_func_pygame(b)
