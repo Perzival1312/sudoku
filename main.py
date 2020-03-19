@@ -40,16 +40,16 @@ def parse_input(input):
 
 def row_checker(board, num, row):
     '''Check if the number (num) is in the specified row (row)'''
-    if num in board[row-1]:
-        return False
-    return True
+    if num in board[row]:
+        return True
+    return False
 
 def col_checker(board, num, col):
     '''Check if the number (num) is in the specified column (col)'''
     for row in board:
-        if num == row[col+1]:
-            return False
-    return True
+        if num == row[col]:
+            return True
+    return False
 
 def box_checker(board, num, box):
     '''
@@ -69,23 +69,74 @@ def box_checker(board, num, box):
     (col-1)*3 = north boundary
     (col*3)-1 = south boundary
 
-
+ 
 
     OR
 
     maually store all coordinates of the board in a dict where key is box number
-    and theres a list of coordinates as the values
+    and theres a list of coordinate tuples as the values
     ^ Should that be hard coded in or algorithmically created at every startup?
     well if were only doing 9x9 it wouuld be fine to hard code it 
     but that looks atrocious...
-    
+
     '''
-    pass
+    box_coords = {1: [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)], 
+    2: [(0, 3), (0, 4), (0, 5), (1, 3), (1, 4), (1, 5), (2, 3), (2, 4), (2, 5)], 
+    3: [(0, 6), (0, 7), (0, 8), (1, 6), (1, 7), (1, 8), (2, 6), (2, 7), (2, 8)], 
+    4: [(3, 0), (3, 1), (3, 2), (4, 0), (4, 1), (4, 2), (5, 0), (5, 1), (5, 2)], 
+    5: [(3, 3), (3, 4), (3, 5), (4, 3), (4, 4), (4, 5), (5, 3), (5, 4), (5, 5)], 
+    6: [(3, 6), (3, 7), (3, 8), (4, 6), (4, 7), (4, 8), (5, 6), (5, 7), (5, 8)], 
+    7: [(6, 0), (6, 1), (6, 2), (7, 0), (7, 1), (7, 2), (8, 0), (8, 1), (8, 2)], 
+    8: [(6, 3), (6, 4), (6, 5), (7, 3), (7, 4), (7, 5), (8, 3), (8, 4), (8, 5)], 
+    9: [(6, 6), (6, 7), (6, 8), (7, 6), (7, 7), (7, 8), (8, 6), (8, 7), (8, 8)]}
+    coords = box_coords[box]
+    for coord in coords:
+        if num == board[coord[0]][coord[1]]:
+            return True
+    return False
 
 def board_checker(board):
     '''Final check to make sure that the board is properly solved'''
-    pass
+    for i in range(1, 10):
+        for c in range(9):
+            if not (row_checker(board, i, c) and col_checker(board, i, c) and box_checker(board, i, c+1)):
+                return False
+    return True
 
 def printer(board):
     '''Print the board to the terminal formatted in a TBD way'''
-    pass
+    print('-'*37)
+    for r in board:
+        stringed = ''
+        for num in r:
+            stringed += str(num) 
+        print('| '+' | '.join(stringed)+' |')
+        print('-'*37)
+
+
+if __name__ == "__main__":
+    #solved board
+    b = [
+    [1,2,3,4,5,6,7,8,9],
+    [4,5,6,7,8,9,1,2,3],
+    [7,8,9,1,2,3,4,5,6],
+    [2,3,4,5,6,7,8,9,1],
+    [5,6,7,8,9,1,2,3,4],
+    [8,9,1,2,3,4,5,6,7],
+    [3,4,5,6,7,8,9,1,2],
+    [6,7,8,9,1,2,3,4,5],
+    [9,1,2,3,4,5,6,7,8]]
+    #wrong board
+    b2 = [
+    [1,2,3,4,5,6,7,8,9],
+    [1,2,3,4,5,6,7,8,9],
+    [1,2,3,4,5,6,7,8,9],
+    [1,2,3,4,5,6,7,8,9],
+    [1,2,3,4,5,6,7,8,9],
+    [1,2,3,4,5,6,7,8,9],
+    [1,2,3,4,5,6,7,8,9],
+    [1,2,3,4,5,6,7,8,9],
+    [1,2,3,4,5,6,7,8,9]]
+
+    print(board_checker(b))
+    printer(b)
