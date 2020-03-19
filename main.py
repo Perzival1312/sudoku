@@ -131,29 +131,36 @@ def board_checker(board):
     return True
 
 def replace(board, num, row, col):
+    '''Place the number (num) in the specified row (row)
+     and column (col) within the board (board)'''
     board[row-1][col-1] = num
 
 def printer(board):
     '''Print the board to the terminal formatted in a TBD way'''
-    width = 45
+    # clear the screen before printing the board
     os.system('clear')
+    # length of row divider lines
+    width = 45
     print('\n   ', end='')
     #print column numbers
     for i in range(1, 10):
         print('  ' + str(i) + ' ', end='')
         if i%3==0:
             print('    ', end='')
-    # print top lin of board
+    # print top line of board
     print('\n\n    ' + '-'*width)
     for i, r in enumerate(board):
-        # convert list of ints into string
+        # convert list of ints into string with spaces every 3 numbers
         stringed = ''
         for ind, num in enumerate(r):
             stringed += str(num) 
             if ind%3==2:
                 stringed += ' '
+        # print row number and row of numbers with dividers
         print(str(i+1) + '   | '+' | '.join(stringed))
+        # print row sperator
         print('    ' +'-'*width)
+        # print box seperator 
         if i%3==2 and i!=8:
             print('    '+'-'*width)
 
