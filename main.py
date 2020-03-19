@@ -105,13 +105,18 @@ def board_checker(board):
 
 def printer(board):
     '''Print the board to the terminal formatted in a TBD way'''
-    print('-'*37)
-    for r in board:
+    width = 45
+    print('-'*width)
+    for i, r in enumerate(board):
         stringed = ''
-        for num in r:
+        for ind, num in enumerate(r):
             stringed += str(num) 
-        print('| '+' | '.join(stringed)+' |')
-        print('-'*37)
+            if ind%3==2:
+                stringed += ' '
+        print('| '+' | '.join(stringed))
+        print('-'*width)
+        if i%3==2 and i!=8:
+            print('-'*width)
 
 
 if __name__ == "__main__":
