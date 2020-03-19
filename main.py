@@ -1,11 +1,21 @@
 '''
 input:
-    string type, empty spots are '0'
-    comma delimited str of ints?
-    single large int?
+    board:
+        string type, empty spots are '0'
+        comma delimited str of single/9digit ints?
+        single large int?
+
+    interactive solving:
+        space or comma delimited? all? or (number coord1,coord2)
+        or 3 seperate input calls? <-- this one call num, row, col
+        number guessing:
+            just a single int
+        position:
+            2 seperate ints
 
 functions:
-    convert input into list of lists --> [[r1], [r2], ...[r9]]
+    convert board input into list of lists --> [[r1], [r2], ...[r9]]
+    validate interactive cli game input
     row checker
     column checker
     box checker
@@ -31,12 +41,30 @@ and the solver could be your bike or car, approved
 '''
 
 
-import pygame
+import pygame, string, os
 
-def parse_input(input):
+def parse_board(input):
     '''Take the input string from the command line and convert it into something usable'''
     usable = []
     return usable
+
+def input_validator(input_string):
+    '''Validate the integers given via the cli
+    input_string - the prompt for the python inupt() function'''
+    valid_input = False
+    while not valid_input:
+        try:
+            testing_input = input(input_string)
+            if not testing_input.isnumeric():
+                print("Only numbers, please try again!")
+            elif len(testing_input)!=1:
+                print("Must be a singular number, please try again!")
+            else:
+                valid_input = True
+                return testing_input
+        except EOFError:
+            print("Not a number! Try again.")
+            continue
 
 def row_checker(board, num, row):
     '''Check if the number (num) is in the specified row (row)'''
@@ -69,16 +97,14 @@ def box_checker(board, num, box):
     (col-1)*3 = north boundary
     (col*3)-1 = south boundary
 
- 
-
     OR
 
     maually store all coordinates of the board in a dict where key is box number
     and theres a list of coordinate tuples as the values
     ^ Should that be hard coded in or algorithmically created at every startup?
     well if were only doing 9x9 it wouuld be fine to hard code it 
-    but that looks atrocious...
-
+    but that looks atrocious... so uh thats what imma do for speed stuff....
+    wait is it actually faster?
     '''
     box_coords = {1: [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)], 
     2: [(0, 3), (0, 4), (0, 5), (1, 3), (1, 4), (1, 5), (2, 3), (2, 4), (2, 5)], 
@@ -106,6 +132,7 @@ def board_checker(board):
 def printer(board):
     '''Print the board to the terminal formatted in a TBD way'''
     width = 45
+    os.system('clear')
     print('-'*width)
     for i, r in enumerate(board):
         stringed = ''
