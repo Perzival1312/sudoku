@@ -164,6 +164,18 @@ def printer(board):
         if i%3==2 and i!=8:
             print('    '+'-'*width)
 
+def place(board, num): # may need more depending on pygame...
+    '''Put the number clicked into the place on the board that is clicked'''
+    # To start I will simply use a textline within pygame to do the same thing as the cli
+    # So I should just be able to reuse those functions
+    # But once i start using clicking I should? have to write this function
+    pass
+
+def display(board): #or should this be called update?
+    '''I'm guessing pygame can just take in a list of lists and then print it out'''
+    # So this should be pretty simple...
+    pass
+
 def main_game_loop_func(board):
     # board is not solved... keep playing
     while not board_checker(board):
