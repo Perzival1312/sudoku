@@ -141,7 +141,7 @@ def printer(board):
     os.system('clear')
     # length of row divider lines
     width = 45
-    print('\n   ', end='')
+    print('\n    ', end='')
     #print column numbers
     for i in range(1, 10):
         print('  ' + str(i) + ' ', end='')
@@ -165,17 +165,21 @@ def printer(board):
             print('    '+'-'*width)
 
 def main_game_loop_func(board):
-    while board_checker:
+    # board is not solved... keep playing
+    while not board_checker(board):
         printer(board)
         num = input_validator('What is the number you wish to place on the board? ')
         row = input_validator('What row is that number to go in? ')
         col = input_validator('What column is that number to go in? ')
         replace(board, num, row, col)
+    # board is solved!
+    printer(board)
+    print('\nYou have successfully Completed this Sudoku puzzle!!')
 
 
 
 if __name__ == "__main__":
-    #solved board
+    # solved board
     b = [
     [1,2,3,4,5,6,7,8,9],
     [4,5,6,7,8,9,1,2,3],
@@ -186,7 +190,7 @@ if __name__ == "__main__":
     [3,4,5,6,7,8,9,1,2],
     [6,7,8,9,1,2,3,4,5],
     [9,1,2,3,4,5,6,7,8]]
-    #wrong board
+    # wrong board
     b2 = [
     [1,2,3,4,5,6,7,8,9],
     [1,2,3,4,5,6,7,8,9],
@@ -197,7 +201,18 @@ if __name__ == "__main__":
     [1,2,3,4,5,6,7,8,9],
     [1,2,3,4,5,6,7,8,9],
     [1,2,3,4,5,6,7,8,9]]
+    # almost solved board
+    b3 = [
+    [1,2,3,4,5,6,7,8,8],
+    [4,5,6,7,8,9,1,2,3],
+    [7,8,9,1,2,3,4,5,6],
+    [2,3,4,5,6,7,8,9,1],
+    [5,6,7,8,9,1,2,3,4],
+    [8,9,1,2,3,4,5,6,7],
+    [3,4,5,6,7,8,9,1,2],
+    [6,7,8,9,1,2,3,4,5],
+    [9,1,2,3,4,5,6,7,8]]
 
     # print(board_checker(b))
-    printer(b)
-    # main_game_loop_func(b2)
+    # printer(b)
+    main_game_loop_func(b3)
