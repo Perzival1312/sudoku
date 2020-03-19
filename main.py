@@ -41,7 +41,7 @@ and the solver could be your bike or car, approved
 '''
 
 
-import pygame, string, os, readline
+import pygame, os, readline
 
 def parse_board(input):
     '''Take the input string from the command line and convert it into something usable'''
@@ -215,4 +215,4 @@ if __name__ == "__main__":
 
     # print(board_checker(b))
     # printer(b)
-    main_game_loop_func(b3)
+    main_game_loop_func(b)
