@@ -174,7 +174,7 @@ def main_game_loop_func(board):
         replace(board, num, row, col)
     # board is solved!
     printer(board)
-    print('\nYou have successfully Completed this Sudoku puzzle!!')
+    print('\nYou have successfully completed this Sudoku puzzle!!')
 
 
 
