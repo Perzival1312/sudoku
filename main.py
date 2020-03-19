@@ -203,30 +203,41 @@ def main_game_loop_func_cli(board):
     print('\nYou have successfully completed this Sudoku puzzle!!')
 
 def main_game_loop_func_pygame(board):
+    # size of sudoku boxes
+    r_size = 50
     pg.init()
-    screen = pg.display.set_mode((640, 640))
+    # window size
+    screen = pg.display.set_mode((11*r_size, 11*r_size))
+    # window title
     pg.display.set_caption('SuDoKu')
     # pg.mouse.set_visible(0)
+    # generate white background surface
     background = pg.Surface(screen.get_size())
     background = background.convert()
     background.fill((250, 250, 250))
+    # Draw title inside of window
     if pg.font:
         font = pg.font.Font(None, 36)
         text = font.render("SuDoKu!", 1, (10, 10, 10))
         textpos = text.get_rect(centerx=background.get_width()/2)
         background.blit(text, textpos)
+    # Draw updated screen with text
     screen.blit(background, (0, 0))
     pg.display.flip()
+    # initialize clock
     clock = pg.time.Clock()
+    # all of the squares for the sudoku grid
     border_rects = []
-    r_size = 50
     for x in range(1, 10):
         for y in range(1, 10):
             border_rects.append(pg.rect.Rect((x+x*r_size, y+y*r_size),(r_size, r_size)))
+    # drawing the squares
     for rect in border_rects:
         pg.draw.rect(background, [0,0,0], rect, 2)
+    #  TODO: draw in text from the board array passed in
 
     while 1:
+        # 60 fps max
         clock.tick(60)
         for event in pg.event.get():
             # Exit events
@@ -234,6 +245,7 @@ def main_game_loop_func_pygame(board):
                 return
             elif event.type == KEYDOWN and event.key == K_ESCAPE:
                 return
+        # uredraws updated screen
         screen.blit(background, (0, 0))
         pg.display.flip()
 
