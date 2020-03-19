@@ -41,7 +41,7 @@ and the solver could be your bike or car, approved
 '''
 
 
-import pygame, string, os
+import pygame, string, os, readline
 
 def parse_board(input):
     '''Take the input string from the command line and convert it into something usable'''
@@ -57,11 +57,11 @@ def input_validator(input_string):
             testing_input = input(input_string)
             if not testing_input.isnumeric():
                 print("Only numbers, please try again!")
-            elif len(testing_input)!=1:
-                print("Must be a singular number, please try again!")
+            elif int(testing_input) < 1 or int(testing_input) > 9:
+                print("Must be between 1 and 9")
             else:
                 valid_input = True
-                return testing_input
+                return int(testing_input)
         except EOFError:
             print("Not a number! Try again.")
             continue
@@ -104,7 +104,8 @@ def box_checker(board, num, box):
     ^ Should that be hard coded in or algorithmically created at every startup?
     well if were only doing 9x9 it wouuld be fine to hard code it 
     but that looks atrocious... so uh thats what imma do for speed stuff....
-    wait is it actually faster?
+    wait is it actually faster? 
+    TODO: test the speeds and write the algo to create this dict
     '''
     box_coords = {1: [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)], 
     2: [(0, 3), (0, 4), (0, 5), (1, 3), (1, 4), (1, 5), (2, 3), (2, 4), (2, 5)], 
@@ -129,21 +130,41 @@ def board_checker(board):
                 return False
     return True
 
+def replace(board, num, row, col):
+    board[row-1][col-1] = num
+
 def printer(board):
     '''Print the board to the terminal formatted in a TBD way'''
     width = 45
     os.system('clear')
-    print('-'*width)
+    print('\n   ', end='')
+    #print column numbers
+    for i in range(1, 10):
+        print('  ' + str(i) + ' ', end='')
+        if i%3==0:
+            print('    ', end='')
+    # print top lin of board
+    print('\n\n    ' + '-'*width)
     for i, r in enumerate(board):
+        # convert list of ints into string
         stringed = ''
         for ind, num in enumerate(r):
             stringed += str(num) 
             if ind%3==2:
                 stringed += ' '
-        print('| '+' | '.join(stringed))
-        print('-'*width)
+        print(str(i+1) + '   | '+' | '.join(stringed))
+        print('    ' +'-'*width)
         if i%3==2 and i!=8:
-            print('-'*width)
+            print('    '+'-'*width)
+
+def main_game_loop_func(board):
+    while board_checker:
+        printer(board)
+        num = input_validator('What is the number you wish to place on the board? ')
+        row = input_validator('What row is that number to go in? ')
+        col = input_validator('What column is that number to go in? ')
+        replace(board, num, row, col)
+
 
 
 if __name__ == "__main__":
@@ -170,5 +191,6 @@ if __name__ == "__main__":
     [1,2,3,4,5,6,7,8,9],
     [1,2,3,4,5,6,7,8,9]]
 
-    print(board_checker(b))
+    # print(board_checker(b))
     printer(b)
+    # main_game_loop_func(b2)
