@@ -204,17 +204,27 @@ def main_game_loop_func_cli(board):
 
 def main_game_loop_func_pygame(board):
     pg.init()
-    screen = pg.display.set_mode((480, 640))
+    screen = pg.display.set_mode((640, 640))
     pg.display.set_caption('SuDoKu')
-    pg.mouse.set_visible(0)
+    # pg.mouse.set_visible(0)
     background = pg.Surface(screen.get_size())
     background = background.convert()
     background.fill((250, 250, 250))
+    if pg.font:
+        font = pg.font.Font(None, 36)
+        text = font.render("SuDoKu!", 1, (10, 10, 10))
+        textpos = text.get_rect(centerx=background.get_width()/2)
+        background.blit(text, textpos)
     screen.blit(background, (0, 0))
     pg.display.flip()
     clock = pg.time.Clock()
-    borders = pg.rect.Rect(10, 10, 50, 50)
-    pg.draw.rect(background, [0,0,0], borders, 2)
+    border_rects = []
+    r_size = 50
+    for x in range(1, 10):
+        for y in range(1, 10):
+            border_rects.append(pg.rect.Rect((x+x*r_size, y+y*r_size),(r_size, r_size)))
+    for rect in border_rects:
+        pg.draw.rect(background, [0,0,0], rect, 2)
 
     while 1:
         clock.tick(60)
