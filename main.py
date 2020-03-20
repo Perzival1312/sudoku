@@ -203,6 +203,8 @@ def main_game_loop_func_cli(board):
     print('\nYou have successfully completed this Sudoku puzzle!!')
 
 def main_game_loop_func_pygame(board):
+    # pygame keycode and corresponding number
+    NUM_KEYS = {49:1, 50:2, 51:3, 52:4, 53:5, 54:6, 55:7, 56:8, 57:9}
     # size of sudoku boxes
     r_size = 50
     pg.init()
@@ -255,10 +257,23 @@ def main_game_loop_func_pygame(board):
                 pos = pg.mouse.get_pos()
                 # find square mouse click is in
                 clicked_sqr = [s for s in border_rects if s.collidepoint(pos)]
-                # save clicked square so that the state status can be reset
-                prev_clicked = clicked_sqr[0]
-                # set state of clicked square
-                pg.draw.rect(background, [200,200,200], clicked_sqr[0])
+                # ensure that a square was actually clicked
+                if clicked_sqr != []:
+                    # save clicked square so that the state status can be reset
+                    prev_clicked = clicked_sqr[0]
+                    # set state of clicked square
+                    pg.draw.rect(background, [200,200,200], clicked_sqr[0])
+            # getting the number pressed to change the clicked sqr to
+            if event.type == KEYDOWN and event.key in NUM_KEYS.keys():
+                # get the number that corresponds to the pygame keycode
+                num = NUM_KEYS[event.key]
+                # get the box that was clicked
+                abs_pos = border_rects.index(prev_clicked)
+                # get the row/col within the board
+                row = abs_pos//9
+                col = abs_pos%9
+                # update number in board
+                board[row][col] = num
 
         # Flatten the board array for easier number placement
         # bc the square list is only 1D
