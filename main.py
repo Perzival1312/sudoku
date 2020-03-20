@@ -279,6 +279,20 @@ def main_game_loop_func_pygame(board):
         screen.blit(background, (0, 0))
         pg.display.flip()
 
+        if board_checker(board):
+            # change screen to win state!
+            background.fill((0,0,0))
+            pg.display.update()
+            if pg.font:
+                font = pg.font.Font(None, 36)
+                text = font.render("SuDoKu!", 1, (250,250,250))
+                textpos = text.get_rect(centerx=background.get_width()/2)
+                background.blit(text, textpos)
+                win_text = font.render("YOU WIN!!", 1, (250,250,250))
+                win_textpos = win_text.get_rect(centerx=background.get_width()/2, centery=background.get_height()/2)
+                background.blit(win_text, win_textpos)
+            
+
     pg.quit()
 
 if __name__ == "__main__":
@@ -318,4 +332,4 @@ if __name__ == "__main__":
 
     # print(board_checker(b))
     # printer(b)
-    main_game_loop_func_pygame(b)
+    main_game_loop_func_pygame(b3)
