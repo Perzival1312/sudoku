@@ -234,9 +234,9 @@ def main_game_loop_func_pygame(board):
     # drawing the squares
     for rect in border_rects:
         pg.draw.rect(background, [0,0,0], rect, 2)
+    # store previously clicked rect initialized as false
     prev_clicked = 0
     while 1:
-    #  TODO: draw in text from the board array passed in
         # 60 fps max
         clock.tick(60)
         for event in pg.event.get():
@@ -247,13 +247,17 @@ def main_game_loop_func_pygame(board):
                 return
             # mouse-click handling
             if event.type == pg.MOUSEBUTTONUP:
+                # revert the previously state changed square
                 if prev_clicked:
                     pg.draw.rect(background, [250,250,250], prev_clicked)
                     pg.draw.rect(background, [0,0,0], prev_clicked, 2)
+                # get mouse position
                 pos = pg.mouse.get_pos()
+                # find square mouse click is in
                 clicked_sqr = [s for s in border_rects if s.collidepoint(pos)]
+                # save clicked square so that the state status can be reset
                 prev_clicked = clicked_sqr[0]
-                print(clicked_sqr[0])
+                # set state of clicked square
                 pg.draw.rect(background, [200,200,200], clicked_sqr[0])
 
         # Flatten the board array for easier number placement
