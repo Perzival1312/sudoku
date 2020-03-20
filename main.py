@@ -234,7 +234,7 @@ def main_game_loop_func_pygame(board):
     # drawing the squares
     for rect in border_rects:
         pg.draw.rect(background, [0,0,0], rect, 2)
-
+    prev_clicked = 0
     while 1:
     #  TODO: draw in text from the board array passed in
         # 60 fps max
@@ -245,6 +245,17 @@ def main_game_loop_func_pygame(board):
                 return
             elif event.type == KEYDOWN and event.key == K_ESCAPE:
                 return
+            # mouse-click handling
+            if event.type == pg.MOUSEBUTTONUP:
+                if prev_clicked:
+                    pg.draw.rect(background, [250,250,250], prev_clicked)
+                    pg.draw.rect(background, [0,0,0], prev_clicked, 2)
+                pos = pg.mouse.get_pos()
+                clicked_sqr = [s for s in border_rects if s.collidepoint(pos)]
+                prev_clicked = clicked_sqr[0]
+                print(clicked_sqr[0])
+                pg.draw.rect(background, [200,200,200], clicked_sqr[0])
+
         # Flatten the board array for easier number placement
         # bc the square list is only 1D
         board_nums = []
@@ -255,8 +266,8 @@ def main_game_loop_func_pygame(board):
             font = pg.font.Font(None, 36)
             for ind, sqr in enumerate(border_rects):
                 text = font.render(str(board_nums[ind]), 1, (10, 10, 10))
+                # position number in the center of all the squares
                 textpos = text.get_rect(centerx=sqr.x+(sqr.width/2), centery=sqr.y+(sqr.height/2))
-                
                 background.blit(text, textpos)
         # redraws updated screen
         screen.blit(background, (0, 0))
