@@ -228,15 +228,15 @@ def main_game_loop_func_pygame(board):
     clock = pg.time.Clock()
     # all of the squares for the sudoku grid
     border_rects = []
-    for x in range(1, 10):
-        for y in range(1, 10):
+    for y in range(1, 10):
+        for x in range(1, 10):
             border_rects.append(pg.rect.Rect((x+x*r_size, y+y*r_size),(r_size, r_size)))
     # drawing the squares
     for rect in border_rects:
         pg.draw.rect(background, [0,0,0], rect, 2)
-    #  TODO: draw in text from the board array passed in
 
     while 1:
+    #  TODO: draw in text from the board array passed in
         # 60 fps max
         clock.tick(60)
         for event in pg.event.get():
@@ -245,7 +245,20 @@ def main_game_loop_func_pygame(board):
                 return
             elif event.type == KEYDOWN and event.key == K_ESCAPE:
                 return
-        # uredraws updated screen
+        # Flatten the board array for easier number placement
+        # bc the square list is only 1D
+        board_nums = []
+        for row in board:
+            board_nums.extend(row)
+        # Draw in the numbers
+        if pg.font:
+            font = pg.font.Font(None, 36)
+            for ind, sqr in enumerate(border_rects):
+                text = font.render(str(board_nums[ind]), 1, (10, 10, 10))
+                textpos = text.get_rect(centerx=sqr.x+(sqr.width/2), centery=sqr.y+(sqr.height/2))
+                
+                background.blit(text, textpos)
+        # redraws updated screen
         screen.blit(background, (0, 0))
         pg.display.flip()
 
