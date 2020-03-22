@@ -50,6 +50,14 @@ if not pg.mixer: print('Warning, sound disabled')
 def parse_board(input):
     '''Take the input string from the command line and convert it into something usable'''
     usable = []
+    temp = []
+    for ind, num in enumerate(input):
+        if (ind+1)%9 != 0:
+            temp.append(int(num))
+        else:
+            temp.append(int(num))
+            usable.append(temp)
+            temp = []
     return usable
 
 def input_validator(input_string):
@@ -366,6 +374,12 @@ def main_game_loop_func_pygame(board):
     pg.quit()
 
 if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        preparse_board = sys.argv[1:][0]
+        board = parse_board(preparse_board)
+        for row in board:
+            print(row)
+        # print(board)
     # solved board
     b = [
     [1,2,3,4,5,6,7,8,9],
@@ -400,5 +414,12 @@ if __name__ == "__main__":
     [6,0,8,9,1,2,3,4,5],
     [0,1,2,3,4,5,6,7,8]]
 
-    main_game_loop_func_pygame(b3)
+    # main_game_loop_func_pygame(b3)
     # printer(solver(b3))
+    printer(solver(board))
+    # super hard brute force
+    # 000000001000103085001020000000507000004000100090001000510000073002010000000040019
+    # very hard brute force
+    # 000060700400005803005003060010009000007020400000100020020700300103500009006040000
+    # hard brute force
+    # 008003700905700000030009000023004870000002000079380240000900020000007305006500400
