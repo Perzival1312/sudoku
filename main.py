@@ -40,20 +40,12 @@ I think a sudoku game would be within scope for this intensive,
 and the solver could be your bike or car, approved
 '''
 
-
-# import pygame as pg 
-# from pygame.locals import *
-
-
-import os, sys
+import os, sys, readline
 import pygame as pg
 from pygame.locals import *
 
 if not pg.font: print('Warning, fonts disabled')
 if not pg.mixer: print('Warning, sound disabled')
-
-
-import os, readline
 
 def parse_board(input):
     '''Take the input string from the command line and convert it into something usable'''
@@ -244,7 +236,7 @@ def main_game_loop_func_pygame(board):
                 pos = pg.mouse.get_pos()
                 # find square mouse click is in
                 clicked_sqr = [s for s in border_rects if s.collidepoint(pos)]
-                # ensure that a square was actually clicked
+                # ensure that a square was actually clicked and not something off the board
                 if clicked_sqr != []:
                     # save clicked square so that the state status can be reset
                     prev_clicked = clicked_sqr[0]
@@ -278,21 +270,22 @@ def main_game_loop_func_pygame(board):
         # redraws updated screen
         screen.blit(background, (0, 0))
         pg.display.flip()
-
+        # change screen to win state!
         if board_checker(board):
-            # change screen to win state!
             background.fill((0,0,0))
             pg.display.update()
             if pg.font:
+                # redo title text in new color
                 font = pg.font.Font(None, 36)
                 text = font.render("SuDoKu!", 1, (250,250,250))
                 textpos = text.get_rect(centerx=background.get_width()/2)
                 background.blit(text, textpos)
+                #  win statement text
                 win_text = font.render("YOU WIN!!", 1, (250,250,250))
-                win_textpos = win_text.get_rect(centerx=background.get_width()/2, centery=background.get_height()/2)
+                win_textpos = win_text.get_rect(centerx=background.get_width()/2, 
+                    centery=background.get_height()/2)
                 background.blit(win_text, win_textpos)
-            
-
+    # friendly quitting
     pg.quit()
 
 if __name__ == "__main__":
@@ -330,6 +323,4 @@ if __name__ == "__main__":
     [6,7,8,9,1,2,3,4,5],
     [9,1,2,3,4,5,6,7,8]]
 
-    # print(board_checker(b))
-    # printer(b)
     main_game_loop_func_pygame(b3)
