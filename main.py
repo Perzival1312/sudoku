@@ -238,7 +238,7 @@ def main_game_loop_func_pygame(board):
     # initialize pygame and all necassary modules
     pg.init()
     # window size
-    screen = pg.display.set_mode((11*r_size, 11*r_size))
+    screen = pg.display.set_mode((11*r_size, 13*r_size))
     # window title
     pg.display.set_caption('SuDoKu')
     # pg.mouse.set_visible(0)
@@ -265,6 +265,14 @@ def main_game_loop_func_pygame(board):
     # drawing the squares
     for rect in border_rects:
         pg.draw.rect(background, [0,0,0], rect, 2)
+    # generate solver button and text
+    solver_button = pg.rect.Rect((background.get_width()/2)-r_size, 11*r_size, r_size*2, r_size)
+    pg.draw.rect(background, [0,0,0], solver_button, 3)
+    if pg.font:
+        font = pg.font.Font(None, 36)
+        text = font.render("Solve!", 1, (10, 10, 10))
+        textpos = text.get_rect(centerx=background.get_width()/2, centery=11.5*r_size)
+        background.blit(text, textpos)
     # store previously clicked rect initialized as false
     prev_clicked = 0
     while 1:
@@ -292,6 +300,9 @@ def main_game_loop_func_pygame(board):
                     prev_clicked = clicked_sqr[0]
                     # set state of clicked square
                     pg.draw.rect(background, [200,200,200], clicked_sqr[0])
+                # solve button logic
+                if solver_button.collidepoint(pos):
+                    solver(board)
             # getting the number pressed to change the clicked sqr to
             if event.type == KEYDOWN and event.key in NUM_KEYS.keys():
                 # get the number that corresponds to the pygame keycode
@@ -322,18 +333,13 @@ def main_game_loop_func_pygame(board):
         pg.display.flip()
         # change screen to win state!
         if board_checker(board):
-            background.fill((0,0,0))
+            # background.fill((0,0,0))
             pg.display.update()
             if pg.font:
-                # redo title text in new color
-                font = pg.font.Font(None, 36)
-                text = font.render("SuDoKu!", 1, (250,250,250))
-                textpos = text.get_rect(centerx=background.get_width()/2)
-                background.blit(text, textpos)
                 #  win statement text
-                win_text = font.render("YOU WIN!!", 1, (250,250,250))
+                win_text = font.render("YOU WIN!!", 1, (0,0,0))
                 win_textpos = win_text.get_rect(centerx=background.get_width()/2, 
-                    centery=background.get_height()/2)
+                    centery=10.5*r_size)
                 background.blit(win_text, win_textpos)
     # friendly quitting
     pg.quit()
@@ -373,5 +379,5 @@ if __name__ == "__main__":
     [6,0,8,9,1,2,3,4,5],
     [0,1,2,3,4,5,6,7,8]]
 
-    # main_game_loop_func_pygame(b3)
-    printer(solver(b3))
+    main_game_loop_func_pygame(b3)
+    # printer(solver(b3))
