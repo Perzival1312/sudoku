@@ -232,7 +232,7 @@ def main_game_loop_func_cli(board):
 
 def main_game_loop_func_pygame(board):
     # pygame keycode and corresponding number
-    NUM_KEYS = {49:1, 50:2, 51:3, 52:4, 53:5, 54:6, 55:7, 56:8, 57:9}
+    NUM_KEYS = {48:0, 49:1, 50:2, 51:3, 52:4, 53:5, 54:6, 55:7, 56:8, 57:9}
     # size of sudoku boxes
     r_size = 50
     # initialize pygame and all necassary modules
@@ -241,7 +241,6 @@ def main_game_loop_func_pygame(board):
     screen = pg.display.set_mode((11*r_size, 13*r_size))
     # window title
     pg.display.set_caption('SuDoKu')
-    # pg.mouse.set_visible(0)
     # generate white background surface
     background = pg.Surface(screen.get_size())
     background = background.convert()
@@ -252,11 +251,10 @@ def main_game_loop_func_pygame(board):
         text = font.render("SuDoKu!", 1, (10, 10, 10))
         textpos = text.get_rect(centerx=background.get_width()/2)
         background.blit(text, textpos)
-    # Draw updated screen with text
-    screen.blit(background, (0, 0))
-    pg.display.flip()
+
     # initialize clock
     clock = pg.time.Clock()
+    
     # all of the squares for the sudoku grid
     border_rects = []
     for y in range(1, 10):
@@ -264,7 +262,9 @@ def main_game_loop_func_pygame(board):
             border_rects.append(pg.rect.Rect((x+x*r_size, y+y*r_size),(r_size, r_size)))
     # drawing the squares
     for rect in border_rects:
-        pg.draw.rect(background, [0,0,0], rect, 2)
+        pg.draw.rect(background, [0,0,0], rect, 3)
+        background.fill([250,250,250], rect=rect)
+    
     # generate solver button and text
     solver_button = pg.rect.Rect((background.get_width()/2)-r_size, 11*r_size, r_size*2, r_size)
     pg.draw.rect(background, [0,0,0], solver_button, 3)
@@ -273,23 +273,34 @@ def main_game_loop_func_pygame(board):
         text = font.render("Solve!", 1, (10, 10, 10))
         textpos = text.get_rect(centerx=background.get_width()/2, centery=11.5*r_size)
         background.blit(text, textpos)
+    
+    # generate box borders
+    box_borders = []
+    box_borders.append(pg.rect.Rect(r_size, r_size, 9+r_size*9, 9+r_size*9))
+    box_borders.append(pg.rect.Rect(2+4*r_size, r_size, 4+3*r_size, 9+9*r_size))
+    box_borders.append(pg.rect.Rect(r_size, 2+4*r_size, 9+9*r_size, 4+3*r_size))
+    
     # store previously clicked rect initialized as false
     prev_clicked = 0
     while 1:
         # 60 fps max
         clock.tick(60)
+        for box in box_borders:
+            pg.draw.rect(background, [0,0,0], box, 6)
+
         for event in pg.event.get():
             # Exit events
             if event.type == QUIT:
                 return
             elif event.type == KEYDOWN and event.key == K_ESCAPE:
                 return
+            
             # mouse-click handling
             if event.type == pg.MOUSEBUTTONUP:
                 # revert the previously state changed square
                 if prev_clicked:
                     pg.draw.rect(background, [250,250,250], prev_clicked)
-                    pg.draw.rect(background, [0,0,0], prev_clicked, 2)
+                    pg.draw.rect(background, [0,0,0], prev_clicked, 1)
                 # get mouse position
                 pos = pg.mouse.get_pos()
                 # find square mouse click is in
@@ -300,9 +311,13 @@ def main_game_loop_func_pygame(board):
                     prev_clicked = clicked_sqr[0]
                     # set state of clicked square
                     pg.draw.rect(background, [200,200,200], clicked_sqr[0])
+                    
                 # solve button logic
                 if solver_button.collidepoint(pos):
+                    for rect in border_rects:
+                        background.fill([250,250,250], rect=rect)
                     solver(board)
+            
             # getting the number pressed to change the clicked sqr to
             if event.type == KEYDOWN and event.key in NUM_KEYS.keys():
                 # get the number that corresponds to the pygame keycode
@@ -314,6 +329,7 @@ def main_game_loop_func_pygame(board):
                 col = abs_pos%9
                 # update number in board
                 board[row][col] = num
+                background.fill([250,250,250], rect=prev_clicked)
 
         # Flatten the board array for easier number placement
         # bc the square list is only 1D
@@ -324,6 +340,7 @@ def main_game_loop_func_pygame(board):
         if pg.font:
             font = pg.font.Font(None, 36)
             for ind, sqr in enumerate(border_rects):
+                # background.fill([250,250,250], rect=sqr)
                 text = font.render(str(board_nums[ind]), 1, (10, 10, 10))
                 # position number in the center of all the squares
                 textpos = text.get_rect(centerx=sqr.x+(sqr.width/2), centery=sqr.y+(sqr.height/2))
@@ -331,9 +348,9 @@ def main_game_loop_func_pygame(board):
         # redraws updated screen
         screen.blit(background, (0, 0))
         pg.display.flip()
+        
         # change screen to win state!
         if board_checker(board):
-            # background.fill((0,0,0))
             pg.display.update()
             if pg.font:
                 #  win statement text
