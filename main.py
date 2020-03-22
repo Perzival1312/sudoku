@@ -123,7 +123,7 @@ def box_checker(board, num, box):
 
     # get box based on coordinate pair
     if isinstance(box, tuple):
-        for key, value in box_coords:
+        for key, value in box_coords.items():
             if box in value:
                 box = key
 
@@ -143,11 +143,13 @@ def board_checker(board):
 
 def solver(board):
     '''
-    get all coordinates of not filled in numbers
-    try to place 1-9 in those coords
-        via row, col, and box checker
-    while not board_checker
+        return the solved given board 
     '''
+    # get all coordinates of not filled in numbers
+    # try to place 1-9 in those coords
+    #     via row, col, and box checker
+    # while not board_checker
+
     # create and array and populate it with coordinates of spots without numbers
     unplaced_nums = []
     for i_r, row in enumerate(board):
@@ -163,6 +165,10 @@ def solver(board):
         to_remove = []
         for coords in unplaced_nums:
             possible_nums = []
+            # find what numbers might work in each square
+            # possible optimization of storing these in a dict
+            # with the cood as the key and possible nums as the value
+            # are tuples hashable?
             for num in range(1, 10):
                 if not row_checker(board, num, coords[0]):
                     if not col_checker(board, num, coords[1]):
@@ -175,16 +181,8 @@ def solver(board):
                 to_remove.append(coords)
         # remove all newly placed coordinates
         for coord in to_remove:
-            unplaced_nums.pop(coord)
-        
-
-
-        for ind, row in enumerate(board):
-            # num not in row
-            if not row_checker(board, num, ind):
-
-
-
+            unplaced_nums.remove(coord)
+    return board
 
 def replace(board, num, row, col):
     '''Place the number (num) in the specified row (row)
@@ -365,14 +363,15 @@ if __name__ == "__main__":
     [1,2,3,4,5,6,7,8,9]]
     # almost solved board
     b3 = [
-    [1,2,3,4,5,6,7,8,8],
-    [4,5,6,7,8,9,1,2,3],
-    [7,8,9,1,2,3,4,5,6],
-    [2,3,4,5,6,7,8,9,1],
-    [5,6,7,8,9,1,2,3,4],
-    [8,9,1,2,3,4,5,6,7],
-    [3,4,5,6,7,8,9,1,2],
-    [6,7,8,9,1,2,3,4,5],
-    [9,1,2,3,4,5,6,7,8]]
+    [1,2,3,4,5,6,7,8,0],
+    [4,5,6,7,8,9,1,0,3],
+    [7,8,9,1,2,3,0,5,6],
+    [2,3,4,5,6,0,8,9,1],
+    [5,6,7,8,0,1,2,3,4],
+    [8,9,1,0,3,4,5,6,7],
+    [3,4,0,6,7,8,9,1,2],
+    [6,0,8,9,1,2,3,4,5],
+    [0,1,2,3,4,5,6,7,8]]
 
-    main_game_loop_func_pygame(b3)
+    # main_game_loop_func_pygame(b3)
+    printer(solver(b3))
