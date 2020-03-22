@@ -40,7 +40,7 @@ I think a sudoku game would be within scope for this intensive,
 and the solver could be your bike or car, approved
 '''
 
-import os, sys, readline
+import os, sys, readline, copy
 import pygame as pg
 from pygame.locals import *
 
@@ -120,6 +120,13 @@ def box_checker(board, num, box):
     7: [(6, 0), (6, 1), (6, 2), (7, 0), (7, 1), (7, 2), (8, 0), (8, 1), (8, 2)], 
     8: [(6, 3), (6, 4), (6, 5), (7, 3), (7, 4), (7, 5), (8, 3), (8, 4), (8, 5)], 
     9: [(6, 6), (6, 7), (6, 8), (7, 6), (7, 7), (7, 8), (8, 6), (8, 7), (8, 8)]}
+
+    # get box based on coordinate pair
+    if isinstance(box, tuple):
+        for key, value in box_coords:
+            if box in value:
+                box = key
+
     coords = box_coords[box]
     for coord in coords:
         if num == board[coord[0]][coord[1]]:
@@ -133,6 +140,51 @@ def board_checker(board):
             if not (row_checker(board, i, c) and col_checker(board, i, c) and box_checker(board, i, c+1)):
                 return False
     return True
+
+def solver(board):
+    '''
+    get all coordinates of not filled in numbers
+    try to place 1-9 in those coords
+        via row, col, and box checker
+    while not board_checker
+    '''
+    # create and array and populate it with coordinates of spots without numbers
+    unplaced_nums = []
+    for i_r, row in enumerate(board):
+        for i_c, col in enumerate(row):
+            if col == 0:
+                unplaced_nums.append((i_r, i_c))
+
+    while not board_checker(board):
+        # prolly wont happen but conditional to catch misplaced number...
+        if len(unplaced_nums) == 0:
+            print('something fucked up')
+            break
+        to_remove = []
+        for coords in unplaced_nums:
+            possible_nums = []
+            for num in range(1, 10):
+                if not row_checker(board, num, coords[0]):
+                    if not col_checker(board, num, coords[1]):
+                        if not box_checker(board, num, (coords)):
+                            possible_nums.append(num)
+            # if there is only one possible number set that in the board
+            # and set that coordinate pair to be removed from the list
+            if len(possible_nums) == 1:
+                board[coords[0]][coords[1]] = possible_nums[0]
+                to_remove.append(coords)
+        # remove all newly placed coordinates
+        for coord in to_remove:
+            unplaced_nums.pop(coord)
+        
+
+
+        for ind, row in enumerate(board):
+            # num not in row
+            if not row_checker(board, num, ind):
+
+
+
 
 def replace(board, num, row, col):
     '''Place the number (num) in the specified row (row)
