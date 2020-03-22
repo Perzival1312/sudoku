@@ -276,8 +276,11 @@ def main_game_loop_func_pygame(board):
     
     # generate box borders
     box_borders = []
+    # outer border
     box_borders.append(pg.rect.Rect(r_size, r_size, 9+r_size*9, 9+r_size*9))
+    # vertical border box
     box_borders.append(pg.rect.Rect(2+4*r_size, r_size, 4+3*r_size, 9+9*r_size))
+    # horizontal border box
     box_borders.append(pg.rect.Rect(r_size, 2+4*r_size, 9+9*r_size, 4+3*r_size))
     
     # store previously clicked rect initialized as false
@@ -285,6 +288,7 @@ def main_game_loop_func_pygame(board):
     while 1:
         # 60 fps max
         clock.tick(60)
+        # draw border boxes
         for box in box_borders:
             pg.draw.rect(background, [0,0,0], box, 6)
 
