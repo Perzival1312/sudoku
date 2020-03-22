@@ -159,37 +159,47 @@ def solver(board):
     # while not board_checker
 
     # create and array and populate it with coordinates of spots without numbers
-    unplaced_nums = []
+    unplaced_nums = {}
     for i_r, row in enumerate(board):
         for i_c, col in enumerate(row):
             if col == 0:
-                unplaced_nums.append((i_r, i_c))
+                unplaced_nums[(i_r, i_c)] = set()
 
+    runs = 0
     while not board_checker(board):
         # prolly wont happen but conditional to catch misplaced number...
         if len(unplaced_nums) == 0:
             print('something fucked up')
             break
         to_remove = []
-        for coords in unplaced_nums:
-            possible_nums = []
+        for coords in unplaced_nums.keys():
+            possible_nums = set()
             # find what numbers might work in each square
             # possible optimization of storing these in a dict
-            # with the cood as the key and possible nums as the value
+            # with the coord as the key and possible nums as the value
             # are tuples hashable?
             for num in range(1, 10):
                 if not row_checker(board, num, coords[0]):
                     if not col_checker(board, num, coords[1]):
                         if not box_checker(board, num, (coords)):
-                            possible_nums.append(num)
+                            if num not in possible_nums:
+                                possible_nums.add(num)
+                                unplaced_nums[coords].add(num)
             # if there is only one possible number set that in the board
             # and set that coordinate pair to be removed from the list
             if len(possible_nums) == 1:
-                board[coords[0]][coords[1]] = possible_nums[0]
+                # set the spot on the board as the only value in the set of nums
+                board[coords[0]][coords[1]] = next(iter(possible_nums))
                 to_remove.append(coords)
+                runs = 0
+        runs += 1
+        if runs == 5:
+            printer(board)
+            print('Unsolveable')
+            break
         # remove all newly placed coordinates
         for coord in to_remove:
-            unplaced_nums.remove(coord)
+            unplaced_nums.pop(coord)
     return board
 
 def replace(board, num, row, col):
@@ -329,6 +339,7 @@ def main_game_loop_func_pygame(board):
                     for rect in border_rects:
                         background.fill([250,250,250], rect=rect)
                     solver(board)
+                    printer(board)
             
             # getting the number pressed to change the clicked sqr to
             if event.type == KEYDOWN and event.key in NUM_KEYS.keys():
@@ -377,9 +388,6 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         preparse_board = sys.argv[1:][0]
         board = parse_board(preparse_board)
-        for row in board:
-            print(row)
-        # print(board)
     # solved board
     b = [
     [1,2,3,4,5,6,7,8,9],
@@ -414,12 +422,14 @@ if __name__ == "__main__":
     [6,0,8,9,1,2,3,4,5],
     [0,1,2,3,4,5,6,7,8]]
 
-    # main_game_loop_func_pygame(b3)
+    main_game_loop_func_pygame(board)
     # printer(solver(b3))
-    printer(solver(board))
+    # printer(solver(board))
     # super hard brute force
     # 000000001000103085001020000000507000004000100090001000510000073002010000000040019
     # very hard brute force
     # 000060700400005803005003060010009000007020400000100020020700300103500009006040000
     # hard brute force
     # 008003700905700000030009000023004870000002000079380240000900020000007305006500400
+
+    # 830029000090700060400010200048002019009000400120900350004060007050001020000350041
