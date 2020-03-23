@@ -129,6 +129,8 @@ def solver(board):
     '''
         return the solved given board 
     '''
+    # TODO: Make an inital check to see if there are any duplicate
+    # numbers in a row/col/box and then just remove both
     # get all coordinates of not filled in numbers
     # try to place 1-9 in those coords
     #     via row, col, and box checker
