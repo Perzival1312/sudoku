@@ -39,8 +39,8 @@ Dani suggestion/approval...
 I think a sudoku game would be within scope for this intensive,
 and the solver could be your bike or car, approved
 '''
-
-import os, sys, readline, copy
+# readline prevents NULL from being submitted via cli
+import os, sys, readline
 import pygame as pg
 from pygame.locals import *
 
@@ -93,31 +93,7 @@ def col_checker(board, num, col):
 
 def box_checker(board, num, box):
     '''
-    box definition:
-        b1  b2  b3
-        b4  b5  b6
-        b7  b8  b9
-
-    find specific box placement in board array:
-    
-    ciel(box/3) = row
-    box%3 = col
-
-    (row-1)*3 = west boundary
-    (row*3)-1 = east boundary
-
-    (col-1)*3 = north boundary
-    (col*3)-1 = south boundary
-
-    OR
-
-    maually store all coordinates of the board in a dict where key is box number
-    and theres a list of coordinate tuples as the values
-    ^ Should that be hard coded in or algorithmically created at every startup?
-    well if were only doing 9x9 it wouuld be fine to hard code it 
-    but that looks atrocious... so uh thats what imma do for speed stuff....
-    wait is it actually faster? 
-    TODO: test the speeds and write the algo to create this dict
+    Checks if the number (num) is in the box (box)
     '''
     box_coords = {1: [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)], 
     2: [(0, 3), (0, 4), (0, 5), (1, 3), (1, 4), (1, 5), (2, 3), (2, 4), (2, 5)], 
@@ -175,9 +151,6 @@ def solver(board):
         for coords in unplaced_nums.keys():
             possible_nums = set()
             # find what numbers might work in each square
-            # possible optimization of storing these in a dict
-            # with the coord as the key and possible nums as the value
-            # are tuples hashable?
             for num in range(1, 10):
                 if not row_checker(board, num, coords[0]):
                     if not col_checker(board, num, coords[1]):
