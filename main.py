@@ -40,9 +40,19 @@ I think a sudoku game would be within scope for this intensive,
 and the solver could be your bike or car, approved
 '''
 # readline prevents NULL from being submitted via cli
-import os, sys, readline
+import os, sys, readline, random
 import pygame as pg
 from pygame.locals import *
+
+box_coords = {1: [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)], 
+2: [(0, 3), (0, 4), (0, 5), (1, 3), (1, 4), (1, 5), (2, 3), (2, 4), (2, 5)], 
+3: [(0, 6), (0, 7), (0, 8), (1, 6), (1, 7), (1, 8), (2, 6), (2, 7), (2, 8)], 
+4: [(3, 0), (3, 1), (3, 2), (4, 0), (4, 1), (4, 2), (5, 0), (5, 1), (5, 2)], 
+5: [(3, 3), (3, 4), (3, 5), (4, 3), (4, 4), (4, 5), (5, 3), (5, 4), (5, 5)], 
+6: [(3, 6), (3, 7), (3, 8), (4, 6), (4, 7), (4, 8), (5, 6), (5, 7), (5, 8)], 
+7: [(6, 0), (6, 1), (6, 2), (7, 0), (7, 1), (7, 2), (8, 0), (8, 1), (8, 2)], 
+8: [(6, 3), (6, 4), (6, 5), (7, 3), (7, 4), (7, 5), (8, 3), (8, 4), (8, 5)], 
+9: [(6, 6), (6, 7), (6, 8), (7, 6), (7, 7), (7, 8), (8, 6), (8, 7), (8, 8)]}
 
 if not pg.font: print('Warning, fonts disabled')
 if not pg.mixer: print('Warning, sound disabled')
@@ -95,16 +105,6 @@ def box_checker(board, num, box):
     '''
     Checks if the number (num) is in the box (box)
     '''
-    box_coords = {1: [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)], 
-    2: [(0, 3), (0, 4), (0, 5), (1, 3), (1, 4), (1, 5), (2, 3), (2, 4), (2, 5)], 
-    3: [(0, 6), (0, 7), (0, 8), (1, 6), (1, 7), (1, 8), (2, 6), (2, 7), (2, 8)], 
-    4: [(3, 0), (3, 1), (3, 2), (4, 0), (4, 1), (4, 2), (5, 0), (5, 1), (5, 2)], 
-    5: [(3, 3), (3, 4), (3, 5), (4, 3), (4, 4), (4, 5), (5, 3), (5, 4), (5, 5)], 
-    6: [(3, 6), (3, 7), (3, 8), (4, 6), (4, 7), (4, 8), (5, 6), (5, 7), (5, 8)], 
-    7: [(6, 0), (6, 1), (6, 2), (7, 0), (7, 1), (7, 2), (8, 0), (8, 1), (8, 2)], 
-    8: [(6, 3), (6, 4), (6, 5), (7, 3), (7, 4), (7, 5), (8, 3), (8, 4), (8, 5)], 
-    9: [(6, 6), (6, 7), (6, 8), (7, 6), (7, 7), (7, 8), (8, 6), (8, 7), (8, 8)]}
-
     # get box based on coordinate pair
     if isinstance(box, tuple):
         for key, value in box_coords.items():
@@ -125,12 +125,61 @@ def board_checker(board):
                 return False
     return True
 
+def get_row(board, row):
+    '''Return a list of all numbers placed within the specified row'''
+    row_nums = []
+    for num in board[row-1]:
+        if num != 0:
+            row_nums.append(num)
+    return row_nums
+
+def get_column(board, col):
+    '''Return a list of all numbers placed within the specified column'''
+    column = []
+    for row in board:
+        if row[col-1] != 0:
+            column.append(row[col-1])
+    return column
+
+def get_box(board, box):
+    '''Return a list of all numbers placed within the specified box'''
+    box_nums = []
+    coord_list = box_coords[box]
+    for coords in coord_list:
+        num = board[coords[0]][coords[1]]
+        if num != 0:
+            box_nums.append(num)
+    return box_nums
+
+def duplicate_checker(board):
+    '''Checks rows, columns, and boxes for any duplicates 
+    returns (the integer of the r/c/b, and a char of 'r','c','b') if there are duplicates
+    returns (0, empty string) if there are no duplicates'''
+    # possibly return the number that is duplicated
+    for i in range(1, 10):
+        row = get_row(board, i)
+        col = get_column(board, i)
+        box = get_box(board, i)
+        if len(row) != len(set(row)):
+            return (i, 'r')
+        if len(col) != len(set(col)):
+            return (i, 'c')
+        if len(box) != len(set(box)):
+            return (i, 'b')        
+    return (0, '')
+
+def generator():
+    # start from nothing and slowly add 
+    # OR
+    # start from solved and slowly subtract
+    # randomly generate the first row and then
+    # r1 --> c1 --> b1,b2,b3
+    pass
+
 def solver(board):
     '''
         return the solved given board 
     '''
-    # TODO: Make an inital check to see if there are any duplicate
-    # numbers in a row/col/box and then just remove both
     # get all coordinates of not filled in numbers
     # try to place 1-9 in those coords
     #     via row, col, and box checker
@@ -145,9 +194,9 @@ def solver(board):
 
     runs = 0
     while not board_checker(board):
-        # prolly wont happen but conditional to catch misplaced number...
-        if len(unplaced_nums) == 0:
-            print('something fucked up')
+        # prolly wont happen but conditional to catch unsolved board without any empty spaces
+        if len(unplaced_nums) == 0:    
+            print('something is messed up')
             break
         to_remove = []
         for coords in unplaced_nums.keys():
