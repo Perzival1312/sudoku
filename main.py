@@ -40,7 +40,7 @@ I think a sudoku game would be within scope for this intensive,
 and the solver could be your bike or car, approved
 '''
 # readline prevents NULL from being submitted via cli
-import os, sys, readline, random, copy
+import os, sys, readline, random, copy, math
 import pygame as pg
 from pygame.locals import *
 
@@ -186,90 +186,132 @@ def generator():
              [0, 0, 0, 0, 0, 0, 0, 0, 0], 
              [0, 0, 0, 0, 0, 0, 0, 0, 0], 
              [0, 0, 0, 0, 0, 0, 0, 0, 0]]
-    # first row
+    # 1st row
     board[0] = random.sample(init_pool, 9)
-    # generating the first column
-    c1_pool = copy.deepcopy(init_pool)
-    c1_pool.remove(board[0][0])
-    # garuntee no repeats in box 1 while generating the column 1
-    while box_checker(board, c1_pool[0], 1) or box_checker(board, c1_pool[1], 1): 
-        random.shuffle(c1_pool)
-    for ind, row in enumerate(board):
-        if row[0] == 0:
-            board[ind][0] = c1_pool[ind-1]
-    # generating the first box
-    placed = get_box(board, 1)
-    b1_pool = copy.deepcopy(init_pool)
-    for num in placed:
-        b1_pool.remove(num)
+    
+    # generate and place the 1st column
+    c1_pool = generate_col(board, 1)
+    board = fill_col(board, 1, c1_pool)
+
+    # generate and place the first box
+    b1_pool = generate_box(board, 1)
     board = fill_box(board, 1, b1_pool)
-    # generating 4th column
-    c4_pool = copy.deepcopy(init_pool)
-    c4_pool.remove(board[0][3])
-    random.shuffle(c4_pool)
-    # garuntee no repeats in rows or boxes
-    need_to_reshuffle = True
-    while need_to_reshuffle:
-        for ind, row in enumerate(board):
-            if ind+1 < len(board):
-                if row_checker(board, c4_pool[ind], ind+1):
-                    random.shuffle(c4_pool)
-                    need_to_reshuffle = True
-                    check_box = False
-                    break
-            else:
-                need_to_reshuffle = False
-                check_box = True
-                break
-        if check_box:
-            if box_checker(board, c4_pool[0], 2) or box_checker(board, c4_pool[1], 2):
-                random.shuffle(c4_pool)
-                need_to_reshuffle = True
-            else:
-                need_to_reshuffle = False
-    # place column
+
+    # generate and place the 4th column
+    c4_pool = generate_col(board, 4)
     board = fill_col(board, 4, c4_pool)
-    # generate second box
-    placed = get_box(board, 2)
-    b2_pool = copy.deepcopy(init_pool)
-    for num in placed:
-        b2_pool.remove(num)
+    
+    # generate and place the second box
+    b2_pool = generate_box(board, 2)
     board = fill_box(board, 2, b2_pool)
-    # generate 7th column
-    c7_pool = copy.deepcopy(init_pool)
-    c7_pool.remove(board[0][6])
-    random.shuffle(c7_pool)
-    # garuntee no repeats in rows or boxes
-    need_to_reshuffle = True
-    while need_to_reshuffle:
-        for ind, row in enumerate(board):
-            if ind+1 < len(board):
-                if row_checker(board, c7_pool[ind], ind+1):
-                    random.shuffle(c7_pool)
-                    need_to_reshuffle = True
-                    check_box = False
-                    break
-            else:
-                need_to_reshuffle = False
-                check_box = True
-                break
-        if check_box:
-            if box_checker(board, c7_pool[0], 3) or box_checker(board, c7_pool[1], 3):
-                random.shuffle(c7_pool)
-                need_to_reshuffle = True
-            else:
-                need_to_reshuffle = False
-    # place column
+    
+    # generate and place the 7th column
+    c7_pool = generate_col(board, 7)
     board = fill_col(board, 7, c7_pool)
-    # generate third box
-    placed = get_box(board, 3)
-    b3_pool = copy.deepcopy(init_pool)
-    for num in placed:
-        b3_pool.remove(num)
+    
+    # generate and place the third box
+    b3_pool = generate_box(board, 3)
     board = fill_box(board, 3, b3_pool)
+    
     # generate 4th row
+    r4_pool = copy.deepcopy(init_pool)
+    placed = get_row(board, 4)
+    for num in placed:
+        r4_pool.remove(num)
+    while len(r4_pool) != 0:
+        for ind, spot in enumerate(board[3]):
+            to_remove = []
+            if spot == 0:
+                for num in r4_pool:
+                    if not col_checker(board, num, ind) and not box_checker(board, num, (4, ind)):
+                        board[3][ind] = num
+                        to_remove.append(num)
+                        break
+                for num in to_remove:
+                    r4_pool.remove(num)
+        if len(to_remove) == 0:
+            break
+    
+    # generate and place the fourth box
+    b4_pool = generate_box(board, 4)
+    board = fill_box(board, 4, b4_pool)
+    # generate and place the fifth box
+    b5_pool = generate_box(board, 5)
+    board = fill_box(board, 5, b5_pool)
+    # generate and place the sixth box
+    b6_pool = generate_box(board, 6)
+    board = fill_box(board, 6, b6_pool)
+
+
+    # generate 7th row
+    r7_pool = copy.deepcopy(init_pool)
+    placed = get_row(board, 7)
+    for num in placed:
+        r7_pool.remove(num)
+    while len(r7_pool) != 0:
+        for ind, spot in enumerate(board[6]):
+            to_remove = []
+            if spot == 0:
+                for num in r7_pool:
+                    if not col_checker(board, num, ind) and not box_checker(board, num, (7, ind)):
+                        board[6][ind] = num
+                        to_remove.append(num)
+                        break
+                for num in to_remove:
+                    r7_pool.remove(num)
+        if len(to_remove) == 0:
+            break
+
+    # generate and place the seventh box
+    b7_pool = generate_box(board, 7)
+    board = fill_box(board, 7, b7_pool)
+    # generate and place the eighth box
+    b8_pool = generate_box(board, 8)
+    board = fill_box(board, 8, b8_pool)
+    # generate and place the ninth box
+    b9_pool = generate_box(board, 9)
+    board = fill_box(board, 9, b9_pool)
+
+    if not board_checker(board):
+        board = generator()
 
     return board
+
+def generate_col(board, col):
+    # generate numbers to go into the column
+    col_pool = [1,2,3,4,5,6,7,8,9]
+    placed = get_column(board, col)
+    for num in placed:
+        col_pool.remove(num)
+    random.shuffle(col_pool)
+    # garuntee no repeats in rows or boxes
+    need_to_reshuffle = True
+    while need_to_reshuffle:
+        for ind, row in enumerate(board):
+            if ind+1 < len(board):
+                if row_checker(board, col_pool[ind], ind+1):
+                    random.shuffle(col_pool)
+                    need_to_reshuffle = True
+                    check_box = False
+                    break
+            else:
+                need_to_reshuffle = False
+                check_box = True
+                break
+        if check_box:
+            if box_checker(board, col_pool[0], math.ceil(col/3)) or box_checker(board, col_pool[1], math.ceil(col/3)):
+                random.shuffle(col_pool)
+                need_to_reshuffle = True
+            else:
+                need_to_reshuffle = False
+    return col_pool
+
+def generate_box(board, box):
+    box_pool = [1,2,3,4,5,6,7,8,9]
+    placed = get_box(board, box)
+    for num in placed:
+        box_pool.remove(num)
+    return box_pool
     
 def fill_col(board, col, filler):
     for ind, row in enumerate(board):
@@ -280,11 +322,16 @@ def fill_col(board, col, filler):
 def fill_box(board, box, filler):
     '''fill in the specified box with a list of numbers (filler)'''
     for coords in box_coords[box]:
+        to_remove = []
         spot = board[coords[0]][coords[1]]
         if spot == 0:
-            num = random.choice(filler)
-            board[coords[0]][coords[1]] = num
-            filler.remove(num)
+            for num in filler:
+                if not row_checker(board, num, coords[0]) and not col_checker(board, num, coords[1]):
+                    board[coords[0]][coords[1]] = num
+                    to_remove.append(num)
+                    break
+            for number in to_remove:
+                filler.remove(number)
     return board
 
 def solver(board):
