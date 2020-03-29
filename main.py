@@ -168,115 +168,6 @@ def duplicate_checker(board):
             return (i, 'b')        
     return (0, '')
 
-def generator():
-    # start from solved and slowly subtract
-    # randomly generate the first row and then
-    # r1 --> c1 --> b1 --> c4 --> b2 --> c7 --> b3
-    # r4 --> b4,5,6
-    # r7 --> b7,8,9
-    # pool of numbers
-    init_pool = [1,2,3,4,5,6,7,8,9]
-    # initialize empty board
-    board = [[0, 0, 0, 0, 0, 0, 0, 0, 0], 
-             [0, 0, 0, 0, 0, 0, 0, 0, 0], 
-             [0, 0, 0, 0, 0, 0, 0, 0, 0], 
-             [0, 0, 0, 0, 0, 0, 0, 0, 0], 
-             [0, 0, 0, 0, 0, 0, 0, 0, 0], 
-             [0, 0, 0, 0, 0, 0, 0, 0, 0], 
-             [0, 0, 0, 0, 0, 0, 0, 0, 0], 
-             [0, 0, 0, 0, 0, 0, 0, 0, 0], 
-             [0, 0, 0, 0, 0, 0, 0, 0, 0]]
-    # 1st row
-    board[0] = random.sample(init_pool, 9)
-    
-    # generate and place the 1st column
-    c1_pool = generate_col(board, 1)
-    board = fill_col(board, 1, c1_pool)
-
-    # generate and place the first box
-    b1_pool = generate_box(board, 1)
-    board = fill_box(board, 1, b1_pool)
-
-    # generate and place the 4th column
-    c4_pool = generate_col(board, 4)
-    board = fill_col(board, 4, c4_pool)
-    
-    # generate and place the second box
-    b2_pool = generate_box(board, 2)
-    board = fill_box(board, 2, b2_pool)
-    
-    # generate and place the 7th column
-    c7_pool = generate_col(board, 7)
-    board = fill_col(board, 7, c7_pool)
-    
-    # generate and place the third box
-    b3_pool = generate_box(board, 3)
-    board = fill_box(board, 3, b3_pool)
-    
-    # generate 4th row
-    r4_pool = copy.deepcopy(init_pool)
-    placed = get_row(board, 4)
-    for num in placed:
-        r4_pool.remove(num)
-    while len(r4_pool) != 0:
-        for ind, spot in enumerate(board[3]):
-            to_remove = []
-            if spot == 0:
-                for num in r4_pool:
-                    if not col_checker(board, num, ind) and not box_checker(board, num, (4, ind)):
-                        board[3][ind] = num
-                        to_remove.append(num)
-                        break
-                for num in to_remove:
-                    r4_pool.remove(num)
-        if len(to_remove) == 0:
-            break
-    
-    # generate and place the fourth box
-    b4_pool = generate_box(board, 4)
-    board = fill_box(board, 4, b4_pool)
-    # generate and place the fifth box
-    b5_pool = generate_box(board, 5)
-    board = fill_box(board, 5, b5_pool)
-    # generate and place the sixth box
-    b6_pool = generate_box(board, 6)
-    board = fill_box(board, 6, b6_pool)
-
-
-    # generate 7th row
-    r7_pool = copy.deepcopy(init_pool)
-    placed = get_row(board, 7)
-    for num in placed:
-        r7_pool.remove(num)
-    while len(r7_pool) != 0:
-        for ind, spot in enumerate(board[6]):
-            to_remove = []
-            if spot == 0:
-                for num in r7_pool:
-                    if not col_checker(board, num, ind) and not box_checker(board, num, (7, ind)):
-                        board[6][ind] = num
-                        to_remove.append(num)
-                        break
-                for num in to_remove:
-                    r7_pool.remove(num)
-        if len(to_remove) == 0:
-            break
-
-    # generate and place the seventh box
-    b7_pool = generate_box(board, 7)
-    board = fill_box(board, 7, b7_pool)
-    # generate and place the eighth box
-    b8_pool = generate_box(board, 8)
-    board = fill_box(board, 8, b8_pool)
-    # generate and place the ninth box
-    b9_pool = generate_box(board, 9)
-    board = fill_box(board, 9, b9_pool)
-
-    if not board_checker(board):
-        board = generator()
-
-    return board
-
 def generate_col(board, col):
     # generate numbers to go into the column
     col_pool = [1,2,3,4,5,6,7,8,9]
@@ -313,6 +204,29 @@ def generate_box(board, box):
         box_pool.remove(num)
     return box_pool
     
+def generate_row(board, row):
+    row_pool = [1,2,3,4,5,6,7,8,9]
+    placed = get_row(board, row)
+    for num in placed:
+        row_pool.remove(num)
+    return row_pool
+
+def fill_row(board, row, filler):
+    while len(filler) != 0:
+        for ind, spot in enumerate(board[row-1]):
+            to_remove = []
+            if spot == 0:
+                for num in filler:
+                    if not col_checker(board, num, ind) and not box_checker(board, num, (row, ind)):
+                        board[row-1][ind] = num
+                        to_remove.append(num)
+                        break
+                for num in to_remove:
+                    filler.remove(num)
+        if len(to_remove) == 0:
+            break
+    return board
+
 def fill_col(board, col, filler):
     for ind, row in enumerate(board):
         if row[col-1] == 0:
@@ -332,6 +246,74 @@ def fill_box(board, box, filler):
                     break
             for number in to_remove:
                 filler.remove(number)
+    return board
+
+def generator():
+    # start from solved and slowly subtract
+    # randomly generate the first row and then
+    # r1 --> c1 --> b1 --> c4 --> b2 --> c7 --> b3
+    # r4 --> b4,5,6
+    # r7 --> b7,8,9
+    # pool of numbers
+    init_pool = [1,2,3,4,5,6,7,8,9]
+    # initialize empty board
+    board = [[0, 0, 0, 0, 0, 0, 0, 0, 0], 
+             [0, 0, 0, 0, 0, 0, 0, 0, 0], 
+             [0, 0, 0, 0, 0, 0, 0, 0, 0], 
+             [0, 0, 0, 0, 0, 0, 0, 0, 0], 
+             [0, 0, 0, 0, 0, 0, 0, 0, 0], 
+             [0, 0, 0, 0, 0, 0, 0, 0, 0], 
+             [0, 0, 0, 0, 0, 0, 0, 0, 0], 
+             [0, 0, 0, 0, 0, 0, 0, 0, 0], 
+             [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+    # 1st row
+    board[0] = random.sample(init_pool, 9)
+    # generate and place the 1st column
+    c1_pool = generate_col(board, 1)
+    board = fill_col(board, 1, c1_pool)
+    # generate and place the first box
+    b1_pool = generate_box(board, 1)
+    board = fill_box(board, 1, b1_pool)
+    # generate and place the 4th column
+    c4_pool = generate_col(board, 4)
+    board = fill_col(board, 4, c4_pool)
+    # generate and place the second box
+    b2_pool = generate_box(board, 2)
+    board = fill_box(board, 2, b2_pool)
+    # generate and place the 7th column
+    c7_pool = generate_col(board, 7)
+    board = fill_col(board, 7, c7_pool)
+    # generate and place the third box
+    b3_pool = generate_box(board, 3)
+    board = fill_box(board, 3, b3_pool)
+    # generate and place the 4th row
+    r4_pool = generate_row(board, 4)
+    board = fill_row(board, 4, r4_pool)
+    # generate and place the fourth box
+    b4_pool = generate_box(board, 4)
+    board = fill_box(board, 4, b4_pool)
+    # generate and place the fifth box
+    b5_pool = generate_box(board, 5)
+    board = fill_box(board, 5, b5_pool)
+    # generate and place the sixth box
+    b6_pool = generate_box(board, 6)
+    board = fill_box(board, 6, b6_pool)
+    # generate and place the 7th row
+    r7_pool = generate_row(board, 7)
+    board = fill_row(board, 7, r7_pool)
+    # generate and place the seventh box
+    b7_pool = generate_box(board, 7)
+    board = fill_box(board, 7, b7_pool)
+    # generate and place the eighth box
+    b8_pool = generate_box(board, 8)
+    board = fill_box(board, 8, b8_pool)
+    # generate and place the ninth box
+    b9_pool = generate_box(board, 9)
+    board = fill_box(board, 9, b9_pool)
+    # make sure generated ba\oard is solvable
+    if not board_checker(board):
+        board = generator()
+
     return board
 
 def solver(board):
