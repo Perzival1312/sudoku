@@ -44,6 +44,8 @@ import os, sys, readline, random, copy, math
 import pygame as pg
 from pygame.locals import *
 
+sys.setrecursionlimit(10000)
+
 box_coords = {1: [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)], 
 2: [(0, 3), (0, 4), (0, 5), (1, 3), (1, 4), (1, 5), (2, 3), (2, 4), (2, 5)], 
 3: [(0, 6), (0, 7), (0, 8), (1, 6), (1, 7), (1, 8), (2, 6), (2, 7), (2, 8)], 
@@ -313,8 +315,25 @@ def generator():
     # make sure generated ba\oard is solvable
     if not board_checker(board):
         board = generator()
-
     return board
+
+def make_puzzle(board):
+    prev_coords = (random.randint(0,8), random.randint(0,8))
+    prev_num = board[prev_coords[0]][prev_coords[1]]
+    board[prev_coords[0]][prev_coords[1]] = 0
+    while solvable(board):
+        prev_coords = (random.randint(0,8), random.randint(0,8))
+        prev_num = board[prev_coords[0]][prev_coords[1]]
+        board[prev_coords[0]][prev_coords[1]] = 0
+    board[prev_coords[0]][prev_coords[1]] = prev_num
+    return board
+
+def solvable(board):
+    board_copy = copy.deepcopy(board)
+    if solver(board_copy) == False:
+        return False
+    else:
+        return True
 
 def solver(board):
     '''
@@ -358,9 +377,10 @@ def solver(board):
                 runs = 0
         runs += 1
         if runs == 5:
-            printer(board)
-            print('Unsolveable')
-            break
+            return False
+            # printer(board)
+            # print('Unsolveable')
+            # break
         # remove all newly placed coordinates
         for coord in to_remove:
             unplaced_nums.pop(coord)
@@ -586,7 +606,12 @@ if __name__ == "__main__":
     [6,0,8,9,1,2,3,4,5],
     [0,1,2,3,4,5,6,7,8]]
 
-    printer(generator())
+    board = generator()
+    printer(board)
+    board = make_puzzle(board)
+    printer(board)
+    printer(solver(board))
+    
     # main_game_loop_func_pygame(board)
     # printer(solver(b3))
     # printer(solver(board))
