@@ -251,6 +251,7 @@ def fill_box(board, box, filler):
     return board
 
 def generator():
+    '''Generates a 2D array that is a solvable 9x9 SuDoKu board'''
     # start from solved and slowly subtract
     # randomly generate the first row and then
     # r1 --> c1 --> b1 --> c4 --> b2 --> c7 --> b3
@@ -318,6 +319,8 @@ def generator():
     return board
 
 def make_puzzle(board):
+    '''Randomly removes a number until the board becomes 
+    unsolvable if the randomly selected number were removed'''
     prev_coords = (random.randint(0,8), random.randint(0,8))
     prev_num = board[prev_coords[0]][prev_coords[1]]
     board[prev_coords[0]][prev_coords[1]] = 0
@@ -329,6 +332,7 @@ def make_puzzle(board):
     return board
 
 def solvable(board):
+    '''Returns True or False for whether or not the board is solvable'''
     board_copy = copy.deepcopy(board)
     if solver(board_copy) == False:
         return False
@@ -378,9 +382,6 @@ def solver(board):
         runs += 1
         if runs == 5:
             return False
-            # printer(board)
-            # print('Unsolveable')
-            # break
         # remove all newly placed coordinates
         for coord in to_remove:
             unplaced_nums.pop(coord)
@@ -468,12 +469,21 @@ def main_game_loop_func_pygame(board):
         background.fill([250,250,250], rect=rect)
     
     # generate solver button and text
-    solver_button = pg.rect.Rect((background.get_width()/2)-r_size, 11*r_size, r_size*2, r_size)
+    solver_button = pg.rect.Rect((background.get_width()//3)-r_size, 11*r_size, r_size*2, r_size)
     pg.draw.rect(background, [0,0,0], solver_button, 3)
     if pg.font:
         font = pg.font.Font(None, 36)
         text = font.render("Solve!", 1, (10, 10, 10))
-        textpos = text.get_rect(centerx=background.get_width()/2, centery=11.5*r_size)
+        textpos = text.get_rect(centerx=background.get_width()//3, centery=11.5*r_size)
+        background.blit(text, textpos)
+
+    # generate new game button and text
+    ng_button = pg.rect.Rect((2*(background.get_width()//3)-1.5*r_size), 11*r_size, r_size*3, r_size)
+    pg.draw.rect(background, [0,0,0], ng_button, 3)
+    if pg.font:
+        font = pg.font.Font(None, 36)
+        text = font.render("New Game", 1, (10, 10, 10))
+        textpos = text.get_rect(centerx=2*(background.get_width()//3), centery=11.5*r_size)
         background.blit(text, textpos)
     
     # generate box borders
@@ -524,6 +534,11 @@ def main_game_loop_func_pygame(board):
                         background.fill([250,250,250], rect=rect)
                     solver(board)
                     printer(board)
+                
+                if ng_button.collidepoint(pos):
+                    for rect in border_rects:
+                        background.fill([250,250,250], rect=rect)
+                    board = make_puzzle(generator())
             
             # getting the number pressed to change the clicked sqr to
             if event.type == KEYDOWN and event.key in NUM_KEYS.keys():
@@ -572,54 +587,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         preparse_board = sys.argv[1:][0]
         board = parse_board(preparse_board)
-    # solved board
-    b = [
-    [1,2,3,4,5,6,7,8,9],
-    [4,5,6,7,8,9,1,2,3],
-    [7,8,9,1,2,3,4,5,6],
-    [2,3,4,5,6,7,8,9,1],
-    [5,6,7,8,9,1,2,3,4],
-    [8,9,1,2,3,4,5,6,7],
-    [3,4,5,6,7,8,9,1,2],
-    [6,7,8,9,1,2,3,4,5],
-    [9,1,2,3,4,5,6,7,8]]
-    # wrong board
-    b2 = [
-    [1,2,3,4,5,6,7,8,9],
-    [1,2,3,4,5,6,7,8,9],
-    [1,2,3,4,5,6,7,8,9],
-    [1,2,3,4,5,6,7,8,9],
-    [1,2,3,4,5,6,7,8,9],
-    [1,2,3,4,5,6,7,8,9],
-    [1,2,3,4,5,6,7,8,9],
-    [1,2,3,4,5,6,7,8,9],
-    [1,2,3,4,5,6,7,8,9]]
-    # almost solved board
-    b3 = [
-    [1,2,3,4,5,6,7,8,0],
-    [4,5,6,7,8,9,1,0,3],
-    [7,8,9,1,2,3,0,5,6],
-    [2,3,4,5,6,0,8,9,1],
-    [5,6,7,8,0,1,2,3,4],
-    [8,9,1,0,3,4,5,6,7],
-    [3,4,0,6,7,8,9,1,2],
-    [6,0,8,9,1,2,3,4,5],
-    [0,1,2,3,4,5,6,7,8]]
 
     board = generator()
-    printer(board)
-    board = make_puzzle(board)
-    printer(board)
-    printer(solver(board))
-    
-    # main_game_loop_func_pygame(board)
-    # printer(solver(b3))
-    # printer(solver(board))
-    # super hard brute force
-    # 000000001000103085001020000000507000004000100090001000510000073002010000000040019
-    # very hard brute force
-    # 000060700400005803005003060010009000007020400000100020020700300103500009006040000
-    # hard brute force
-    # 008003700905700000030009000023004870000002000079380240000900020000007305006500400
-
-    # 830029000090700060400010200048002019009000400120900350004060007050001020000350041
+    board = make_puzzle(board)    
+    main_game_loop_func_pygame(board)
