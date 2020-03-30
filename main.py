@@ -40,7 +40,7 @@ I think a sudoku game would be within scope for this intensive,
 and the solver could be your bike or car, approved
 '''
 # readline prevents NULL from being submitted via cli
-import os, sys, readline, random, copy, math
+import os, sys, random, copy, math
 import pygame as pg
 from pygame.locals import *
 
@@ -422,16 +422,27 @@ def printer(board):
             print('    '+'-'*width)
 
 def main_game_loop_func_cli(board):
+    solve = ''
     # board is not solved... keep playing
     while not board_checker(board):
         printer(board)
-        num = input_validator('What is the number you wish to place on the board? ')
-        row = input_validator('What row is that number to go in? ')
-        col = input_validator('What column is that number to go in? ')
-        replace(board, num, row, col)
-    # board is solved!
-    printer(board)
-    print('\nYou have successfully completed this Sudoku puzzle!!')
+        if solve == '':
+            solve = input('Do you want to see this one solved? (Y/n)')
+            if solve == 'Y':
+                board = solver(board)
+        else:
+            num = input_validator('What is the number you wish to place on the board? ')
+            row = input_validator('What row is that number to go in? ')
+            col = input_validator('What column is that number to go in? ')
+            replace(board, num, row, col)
+        if board_checker(board):
+            # board is solved!
+            printer(board)
+            print('\nYou have successfully completed this Sudoku puzzle!!')
+            new_game = input('Do you want to play again? (Y/n)')
+            if new_game == 'Y':
+                solve = ''
+                board = make_puzzle(generator())
 
 def main_game_loop_func_pygame(board):
     # pygame keycode and corresponding number
@@ -589,5 +600,7 @@ if __name__ == "__main__":
         board = parse_board(preparse_board)
 
     board = generator()
-    board = make_puzzle(board)    
-    main_game_loop_func_pygame(board)
+    board = make_puzzle(board)   
+    # printer(board)
+    main_game_loop_func_cli(board) 
+    # main_game_loop_func_pygame(board)
